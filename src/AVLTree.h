@@ -9,6 +9,7 @@ class AVLTree {
 private:
     int levelCount;
     int nodeCount;
+    Node* treeRoot; // The root of the entire AVL tree
 
     Node* insert(Node* root, string name, int ID);
     void remove(int ID);
@@ -19,9 +20,10 @@ private:
     void printPostorder();
     void printLevelCount();
     void removeInorder(int n);
+
 public:
-    AVLTree(string name, int ID);
-    Node* root;
+    AVLTree();
+    ~AVLTree();
 };
 
 
