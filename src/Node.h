@@ -7,11 +7,12 @@ struct Node {
     Node* left;
     Node* right;
     string name;
-    int ID;
+    string ID;
     int height;
     int balanceFactor;
 
-    Node(string name, int ID);
+    Node();
+    Node(string name, string ID);
 };
 
 

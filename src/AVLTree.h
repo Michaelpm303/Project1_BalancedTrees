@@ -2,6 +2,8 @@
 #define PROJECT1_BALANCEDTREES_AVLTREE_H
 #include "Node.h"
 #include <string>
+#include <iostream>
+#include <iomanip>
 using namespace std;
 
 
@@ -11,7 +13,11 @@ private:
     int nodeCount;
     Node* treeRoot; // The root of the entire AVL tree
 
-    Node* insert(Node* root, string name, int ID);
+    Node* insertHelper(Node* root, string name, string ID);
+
+
+public:
+    void insert(string name, string ID);
     void remove(int ID);
     string search(int ID);
     int search(string ID);
@@ -20,8 +26,7 @@ private:
     void printPostorder();
     void printLevelCount();
     void removeInorder(int n);
-
-public:
+    void printBTHeight(Node* rootV, int indent = 0);
     AVLTree();
     ~AVLTree();
 };
