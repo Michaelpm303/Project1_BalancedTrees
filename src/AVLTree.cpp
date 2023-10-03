@@ -24,6 +24,11 @@ Node* AVLTree::insertHelper(Node* root, string name, string ID) {
     else if(ID > root->ID) {
         root->right = insertHelper(root->right, name, ID);
     }
+    // If current ID is already stored
+    else if(ID == root->ID) {
+        cout << "unsuccessful" << endl;
+        return root;
+    }
     // Calculating height of current node
     root->height = 1 + max(root->left ? root->left->height : 0, root->right ? root->right->height : 0);
     // Calculating balance factor of current node
