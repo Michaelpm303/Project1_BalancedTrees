@@ -93,7 +93,7 @@ void AVLTree::insert(string name, string ID) {
     printBTHeight(treeRoot);
 
 }
-
+// With help from ChatGPT to visualize the tree to make troubleshooting much easier
 void AVLTree::printBTHeight(Node* rootV, int indent) {
     if (rootV == nullptr) {
         return;
