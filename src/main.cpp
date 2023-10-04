@@ -32,10 +32,26 @@ int main() {
         commandStream >> command >> ws;
         if(command == "insert") {
             // Declaring parameters
-            string parameter1;
-            string parameter2;
-            getline(commandStream,parameter1,'"');
-            commandStream >> parameter2;
+            string nameInput;
+            string IDInput;
+
+            // Ensures that the name is inputted within quotes
+            if (commandStream.peek() == '"') {
+                commandStream >> quoted(nameInput);
+            }
+            commandStream >> IDInput;
+
+            tree.insert(nameInput,IDInput);
+        }
+        else if (command == "remove") {
+            string IDInput;
+            commandStream >> IDInput;
+            tree.remove(IDInput);
+        }
+        else if (command == "search") {
+            string input;
+            commandStream >> input;
+            tree.search(input);
         }
         //vector<string> commandV;
 //        while(getline(commandStream,word, ' ')) {
