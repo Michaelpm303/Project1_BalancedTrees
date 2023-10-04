@@ -14,13 +14,13 @@ private:
     Node* treeRoot; // The root of the entire AVL tree
 
     Node* insertHelper(Node* root, string name, string ID);
-    string searchID(Node* root, string ID);
-    string searchName(Node* root, string name);
+    bool searchID(Node* root, string ID);
+    bool searchName(Node* root, string name);
     void removeHelper(Node* root, Node* parent, string ID);
 public:
     void insert(string name, string ID);
     void remove(string ID);
-    string search(string input);
+    void search(string input);
     void printInorder();
     void printPreorder();
     void printPostorder();

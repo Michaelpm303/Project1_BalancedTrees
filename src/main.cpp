@@ -11,7 +11,7 @@ int main() {
     AVLTree tree;
 
     string numCommands;
-    cout << "Input:" << endl;
+
     getline(cin,numCommands); // Number of commands
 
     regex IDReg = regex("^[0-9]{8,8}$"); // 8-digit number
@@ -27,7 +27,6 @@ int main() {
         istringstream commandStream(commandString);
 
         string command; // Command
-
 
         commandStream >> command >> ws;
         if(command == "insert") {
@@ -50,7 +49,13 @@ int main() {
         }
         else if (command == "search") {
             string input;
-            commandStream >> input;
+            // If input has quotes (expect spaces, so need quoted function)
+            if (commandStream.peek() == '"') {
+                commandStream >> quoted(input);
+            }
+            else {
+                commandStream >> input;
+            }
             tree.search(input);
         }
         //vector<string> commandV;

@@ -13,6 +13,7 @@ AVLTree::~AVLTree() {
 }
 
 // Using code from 9/28 lecture
+// O(log(n))
 Node* AVLTree::insertHelper(Node* root, string name, string ID) {
     regex IDReg = regex("^[0-9]{8,8}$"); // 8-digit number
     regex nameReg = regex("^[a-zA-Z\\s]+$"); // Alphabetical characters and spaces, quotes were already checked
@@ -24,6 +25,7 @@ Node* AVLTree::insertHelper(Node* root, string name, string ID) {
     }
     // Base Case: creating leaf node in appropriate position
     if(root == nullptr) {
+        cout << "successful" << endl;
         return new Node(name, ID);
     }
     // If current ID is already stored
@@ -105,10 +107,8 @@ Node* AVLTree::insertHelper(Node* root, string name, string ID) {
 
 void AVLTree::insert(string name, string ID) {
     treeRoot = insertHelper(treeRoot, name, ID);
-
-    printBTHeight(treeRoot);
-
 }
+
 // Need to store the parent node to add the subtree back to the tree after its root is deleted
 void AVLTree::removeHelper(Node* root, Node* parent, string ID) {
     // Case 1: target node has left child
@@ -138,49 +138,75 @@ void AVLTree::remove(string ID) {
     }
 }
 
-string AVLTree::searchID(Node* root, string ID) {
-    string foundName;
+// O(log(n))
+bool AVLTree::searchID(Node* root, string ID) {
+    bool IDFound = false;
+    if(root == nullptr) {
+        return false;
+    }
     // Base case: matching ID
     if(root->ID == ID) {
         cout << root->name << endl;
-        return root->name;
+        IDFound = true;
     }
     // Search left subtree
     else if(ID < root->ID) {
-        foundName = searchID(root->left, ID);
+        IDFound = searchID(root->left, ID);
     }
     // Search right subtree
     else if(ID > root->ID) {
-        foundName = searchID(root->right, ID);
+        IDFound = searchID(root->right, ID);
     }
-    // Base case: no matching ID
-    else {
-        cout << "unsuccessful" << endl;
-    }
-    return foundName;
+
+    return IDFound;
 }
 
-string AVLTree::searchName(Node* root, string name) {
-    return "";
+// O(n)
+bool AVLTree::searchName(Node* root, string name) {
+    bool nameFound = false;
+    // Base case: leaf node
+    if(root == nullptr) {
+        return false;
+    }
+    // Node (N)
+    if (root->name == name) {
+        cout << root->ID << endl;
+        nameFound = true;
+    }
+    // Left subtree (L)
+    if(searchName(root->left, name)) {
+        nameFound = true;
+    }
+    // Right subtree (R)
+    if(searchName(root->right, name)) {
+        nameFound = true;
+    }
+    // If no matching name was found
+    return nameFound;
 }
 
 // search(string input) function checks for ID or NAME input
-string AVLTree::search(string input) {
+void AVLTree::search(string input) {
     regex IDReg = regex("^[0-9]{8,8}$"); // 8-digit number
     regex nameReg = regex("^[a-zA-Z\\s]+$"); // Alphabetical characters and spaces, quotes were already checked
 
     // If searching using ID as input
     if(regex_match(input,IDReg)) {
-        return searchID(treeRoot,input);
+        if(!searchID(treeRoot,input)) {
+            cout << "unsuccessful" << endl;
+        }
     }
     // If searching using NAME as input
-    if(regex_match(input,nameReg)) {
-        return searchName(treeRoot, input);
+    else if(regex_match(input,nameReg)) {
+        // If no matching name was found
+        if (!searchName(treeRoot, input)) {
+            cout << "unsuccessful" << endl;
+        }
     }
     // Invalid input
     else {
         cout << "unsuccessful" << endl;
-        return "";
+        return;
     }
 }
 
