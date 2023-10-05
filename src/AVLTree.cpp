@@ -124,9 +124,9 @@ Node* AVLTree::insertHelper(Node* root, string name, string ID) {
 }
 
 void AVLTree::insert(string name, string ID) {
+
     treeRoot = insertHelper(treeRoot, name, ID);
 
-    //printBTHeight(treeRoot);
 }
 
 Node* AVLTree::removeHelper(Node* root, string ID, bool& foundTarget) {
@@ -212,6 +212,7 @@ Node* AVLTree::removeHelper(Node* root, string ID, bool& foundTarget) {
 
 
 void AVLTree::remove(string ID) {
+
     // bool to check if successful or not
     bool foundTarget = false;
 
@@ -243,7 +244,6 @@ void AVLTree::remove(string ID) {
             cout << "unsuccessful" << endl;
         }
     }
-    //printBTHeight(treeRoot);
 }
 
 // O(log(n))
@@ -508,6 +508,7 @@ Node *AVLTree::removeInorderHelper(Node* root, int& i, int n) {
 
 
 void AVLTree::removeInorder(string n) {
+
     // Verifying correct input
     regex numReg = regex("^[0-9]+$");
     if(!regex_match(n,numReg)) {
@@ -525,41 +526,8 @@ void AVLTree::removeInorder(string n) {
         removeInorderHelper(treeRoot, i, numN);
         cout << "successful" << endl;
     }
-    //printBTHeight(treeRoot);
 }
 
-
-// With help from ChatGPT to visualize the tree to make troubleshooting much easier
-void AVLTree::printBTHeight(Node* rootV, int indent) {
-    if (rootV == nullptr) {
-        return;
-    }
-
-    // Print the right subtree first
-    if (rootV->right != nullptr) {
-        printBTHeight(rootV->right, indent + 4);
-    }
-
-    // Print the current node's data with indentation
-    std::cout << std::setw(indent) << " " << rootV->ID << "/" << rootV->balanceFactor << "/" << rootV->height << "\n";
-
-    // Print the left subtree
-    if (rootV->left != nullptr) {
-        printBTHeight(rootV->left, indent + 4);
-    }
+int AVLTree::getNodeCount() {
+    return nodeCount;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -97,12 +97,12 @@ build Project1_BalancedTrees.exe: CXX_EXECUTABLE_LINKER__Project1_BalancedTrees_
 
 build cmake_object_order_depends_target_Tests: phony || cmake_object_order_depends_target_Catch2 cmake_object_order_depends_target_Catch2WithMain
 
-build CMakeFiles/Tests.dir/test-unit/test.cpp.obj: CXX_COMPILER__Tests_Debug C$:/Users/CHawk/CLionProjects/DSA/Project1-BalancedTrees/test-unit/test.cpp || cmake_object_order_depends_target_Tests
-  DEP_FILE = CMakeFiles\Tests.dir\test-unit\test.cpp.obj.d
+build CMakeFiles/Tests.dir/src/test.cpp.obj: CXX_COMPILER__Tests_Debug C$:/Users/CHawk/CLionProjects/DSA/Project1-BalancedTrees/src/test.cpp || cmake_object_order_depends_target_Tests
+  DEP_FILE = CMakeFiles\Tests.dir\src\test.cpp.obj.d
   FLAGS = -Wall -Werror -g -std=gnu++14
   INCLUDES = -IC:/Users/CHawk/CLionProjects/DSA/Project1-BalancedTrees/test-unit -IC:/Users/CHawk/CLionProjects/DSA/Project1-BalancedTrees/cmake-build-debug/_deps/catch2-src/src/catch2/.. -IC:/Users/CHawk/CLionProjects/DSA/Project1-BalancedTrees/cmake-build-debug/generated-includes
   OBJECT_DIR = CMakeFiles\Tests.dir
-  OBJECT_FILE_DIR = CMakeFiles\Tests.dir\test-unit
+  OBJECT_FILE_DIR = CMakeFiles\Tests.dir\src
 
 
 # =============================================================================
@@ -112,7 +112,7 @@ build CMakeFiles/Tests.dir/test-unit/test.cpp.obj: CXX_COMPILER__Tests_Debug C$:
 #############################################
 # Link the executable Tests.exe
 
-build Tests.exe: CXX_EXECUTABLE_LINKER__Tests_Debug CMakeFiles/Tests.dir/test-unit/test.cpp.obj | _deps/catch2-build/src/libCatch2Maind.a _deps/catch2-build/src/libCatch2d.a || _deps/catch2-build/src/libCatch2Maind.a _deps/catch2-build/src/libCatch2d.a
+build Tests.exe: CXX_EXECUTABLE_LINKER__Tests_Debug CMakeFiles/Tests.dir/src/test.cpp.obj | _deps/catch2-build/src/libCatch2Maind.a _deps/catch2-build/src/libCatch2d.a || _deps/catch2-build/src/libCatch2Maind.a _deps/catch2-build/src/libCatch2d.a
   FLAGS = -Wall -Werror -g
   LINK_LIBRARIES = _deps/catch2-build/src/libCatch2Maind.a  _deps/catch2-build/src/libCatch2d.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Tests.dir

@@ -26,7 +26,7 @@ add_executable(Project1_BalancedTrees
         src/AVLTree.h)
 
 add_executable(Tests
-        test-unit/test.cpp)
+        src/test.cpp)
 
 target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain) #link catch to test.cpp file
 # the name here must match that of your testing executable (the one that has test.cpp)

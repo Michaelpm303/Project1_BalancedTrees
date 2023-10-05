@@ -21,8 +21,8 @@ private:
     void printPreorderHelper(Node* root, bool& isFirst);
     void printPostorderHelper(Node* root, bool& isFirst);
     Node* removeInorderHelper(Node* root, int& i, int n);
-public:
     int nodeCount;
+public:
     void insert(string name, string ID);
     void remove(string ID);
     void search(string input);
@@ -31,7 +31,9 @@ public:
     void printPostorder();
     void printLevelCount();
     void removeInorder(string n);
-    void printBTHeight(Node* rootV, int indent = 0);
+
+    int getNodeCount();
+
     AVLTree();
     ~AVLTree();
 };
