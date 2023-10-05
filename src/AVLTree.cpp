@@ -129,6 +129,7 @@ void AVLTree::insert(string name, string ID) {
 
 }
 
+// O(log(n))
 Node* AVLTree::removeHelper(Node* root, string ID, bool& foundTarget) {
     if (root == nullptr) {
         return root;
@@ -190,12 +191,10 @@ Node* AVLTree::removeHelper(Node* root, string ID, bool& foundTarget) {
                 successor = successor->left;
             }
             // Preventing node pointing to itself
-            if(root->right == successor) {
-                successor->right = nullptr;
-            }
-            else {
+            if(root->right != successor) {
                 successor->right = root->right;
             }
+
             successor->left = root->left;
             // Special case: deleted node is the treeRoot
             if(treeRoot == root) {
@@ -423,15 +422,14 @@ Node *AVLTree::removeInorderHelper(Node* root, int& i, int n) {
     if(root == nullptr) {
         return root;
     }
+
     // Left (L)
     root->left = removeInorderHelper(root->left, i, n);
-
 
     // Node (N)
     // Found target node to delete
     if (i == n) {
 
-        nodeCount--;
         i++;
 
         // Case 1: target node has no children
@@ -481,12 +479,10 @@ Node *AVLTree::removeInorderHelper(Node* root, int& i, int n) {
                 successor = successor->left;
             }
             // Preventing node pointing to itself
-            if(root->right == successor) {
-                successor->right = nullptr;
-            }
-            else {
+            if(root->right != successor) {
                 successor->right = root->right;
             }
+
             successor->left = root->left;
             // Special case: deleted node is the treeRoot
             if(treeRoot == root) {
@@ -522,9 +518,12 @@ void AVLTree::removeInorder(string n) {
             cout << "unsuccessful" << endl;
             return;
         }
+        // Only runs if we KNOW it will find its target
         int i = 0;
         removeInorderHelper(treeRoot, i, numN);
+        updateHeights(treeRoot); // Fix the heights O(n)
         cout << "successful" << endl;
+        nodeCount--;
     }
 }
 
