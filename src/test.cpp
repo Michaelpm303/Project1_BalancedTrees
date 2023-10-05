@@ -1,16 +1,11 @@
 #define CATCH_CONFIG_MAIN
 
-#include <catch2/catch_test_macros.hpp>
-#include <../src/AVLTree.cpp>
-#include <../src/Node.cpp>
+#include "catch2/catch_test_macros.hpp"
+#include "AVLTree.cpp"
+#include "Node.cpp"
 #include <algorithm>
 
 using namespace std;
-
-/*
-	To check output (At the Project1 directory):
-		g++ -std=c++14 -Werror -Wuninitialized -o build/test test-unit/test.cpp && build/test
-*/
 
 TEST_CASE("Incorrect Commands"){
     // Making cout go to output stream
@@ -32,14 +27,15 @@ TEST_CASE("Incorrect Commands"){
     tree.search("tree Root 11111111"); // "uns."
     // (4) Invalid removeInorder N input // "uns."
     tree.removeInorder("zero");
+    // (5) Invalid remove ID
+    tree.remove("tree Root"); // "uns."
 
     // Valid search input
     tree.search("11111111"); // "tree Root"
     // Valid removeInorder N input
     tree.removeInorder("0"); // "suc."
 
-    // (5) Invalid insert NAME input
-    tree.insert("Michael_Milligan", "88888888"); // "uns."
+
 
 
     cout.rdbuf(p_cout_streambuf); // restore
@@ -49,9 +45,9 @@ TEST_CASE("Incorrect Commands"){
                          "successful\n"
                          "unsuccessful\n"
                          "unsuccessful\n"
+                         "unsuccessful\n"
                          "tree Root\n"
-                         "successful\n"
-                         "unsuccessful\n");
+                         "successful\n");
 
 }
 
@@ -273,6 +269,6 @@ TEST_CASE("BST Insert Large") {
     // restore
     cout.rdbuf(p_cout_streambuf);
 
-    REQUIRE(tree.nodeCount == 90);
+    REQUIRE(tree.getNodeCount() == 90);
 
 }
