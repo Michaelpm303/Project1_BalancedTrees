@@ -16,7 +16,7 @@ private:
     Node* insertHelper(Node* root, string name, string ID);
     Node* searchID(Node* root, string ID);
     bool searchName(Node* root, string name);
-    Node* removeHelper(Node* root, string ID);
+    Node* removeHelper(Node* root, string ID, bool& foundTarget);
     void printInorderHelper(Node* root, bool& isFirst);
     void printPreorderHelper(Node* root, bool& isFirst);
     void printPostorderHelper(Node* root, bool& isFirst);
@@ -33,7 +33,7 @@ public:
     void removeInorder(string n);
     void printBTHeight(Node* rootV, int indent = 0);
     AVLTree();
-    //~AVLTree();
+    ~AVLTree();
 };
 
 

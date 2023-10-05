@@ -7,7 +7,7 @@ AVLTree::AVLTree() {
     nodeCount = 0;
 }
 
-//AVLTree::~AVLTree() = default;
+AVLTree::~AVLTree() = default;
 
 void AVLTree::updateHeights(Node* root) {
     if(root == nullptr) {
@@ -129,18 +129,21 @@ void AVLTree::insert(string name, string ID) {
     //printBTHeight(treeRoot);
 }
 
-Node* AVLTree::removeHelper(Node* root, string ID) {
+Node* AVLTree::removeHelper(Node* root, string ID, bool& foundTarget) {
     if (root == nullptr) {
         return root;
     }
     if (ID < root->ID) {
-        root->left = removeHelper(root->left, ID);
+        root->left = removeHelper(root->left, ID, foundTarget);
     }
     else if (ID > root->ID) {
-        root->right = removeHelper(root->right, ID);
+        root->right = removeHelper(root->right, ID, foundTarget);
     }
     // If the root is the deletion target
     else {
+        // Update bool
+        foundTarget = true;
+
         // Case 1: target node has no children
         if (!root->left && !root->right) {
             if(treeRoot == root) {
@@ -173,7 +176,7 @@ Node* AVLTree::removeHelper(Node* root, string ID) {
             return temp;
         }
         // Case 4: target node has both children
-        else {
+        else if (root->left && root->right) {
             Node* successor = root->right;
             while (successor->left) {
                 // When successor->left is the target successor, ensure moving the successor does
@@ -202,12 +205,16 @@ Node* AVLTree::removeHelper(Node* root, string ID) {
             root = nullptr;
             return successor;
         }
+
     }
     return root;
 }
 
 
 void AVLTree::remove(string ID) {
+    // bool to check if successful or not
+    bool foundTarget = false;
+
     // First verify correct input
     regex IDReg = regex("^[0-9]{8,8}$"); // 8-digit number
     if(!regex_match(ID, IDReg)) {
@@ -222,13 +229,19 @@ void AVLTree::remove(string ID) {
         nodeCount--;
         treeRoot = nullptr;
     }
-    else if(!removeHelper(treeRoot, ID)) {
-        cout << "unsuccessful" << endl;
-    }
+    // Removing node form normal tree
     else {
-        updateHeights(treeRoot); // Fix the heights O(n)
-        cout << "successful" << endl;
-        nodeCount--;
+        removeHelper(treeRoot, ID, foundTarget);
+
+        // The function found and deleted target
+        if (foundTarget) {
+            updateHeights(treeRoot); // Fix the heights O(n)
+            cout << "successful" << endl;
+            nodeCount--;
+        }
+        else {
+            cout << "unsuccessful" << endl;
+        }
     }
     //printBTHeight(treeRoot);
 }
