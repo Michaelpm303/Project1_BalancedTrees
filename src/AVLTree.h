@@ -10,14 +10,19 @@ using namespace std;
 class AVLTree {
 private:
     int levelCount;
-    int nodeCount;
     Node* treeRoot; // The root of the entire AVL tree
 
+    void updateHeights(Node* root);
     Node* insertHelper(Node* root, string name, string ID);
-    bool searchID(Node* root, string ID);
+    Node* searchID(Node* root, string ID);
     bool searchName(Node* root, string name);
-    void removeHelper(Node* root, Node* parent, string ID);
+    Node* removeHelper(Node* root, string ID);
+    void printInorderHelper(Node* root, bool& isFirst);
+    void printPreorderHelper(Node* root, bool& isFirst);
+    void printPostorderHelper(Node* root, bool& isFirst);
+    Node* removeInorderHelper(Node* root, int& i, int n);
 public:
+    int nodeCount;
     void insert(string name, string ID);
     void remove(string ID);
     void search(string input);
@@ -25,10 +30,10 @@ public:
     void printPreorder();
     void printPostorder();
     void printLevelCount();
-    void removeInorder(int n);
+    void removeInorder(string n);
     void printBTHeight(Node* rootV, int indent = 0);
     AVLTree();
-    ~AVLTree();
+    //~AVLTree();
 };
 
 

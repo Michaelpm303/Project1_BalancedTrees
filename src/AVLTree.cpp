@@ -5,11 +5,18 @@ AVLTree::AVLTree() {
     treeRoot = nullptr;
     levelCount = 0;
     nodeCount = 0;
-
 }
 
-AVLTree::~AVLTree() {
+//AVLTree::~AVLTree() = default;
 
+void AVLTree::updateHeights(Node* root) {
+    if(root == nullptr) {
+        return;
+    }
+    updateHeights(root->left);
+    updateHeights(root->right);
+
+    root->height = 1 + max(root->left ? root->left->height : 0, root->right ? root->right->height : 0);
 }
 
 // Using code from 9/28 lecture
@@ -26,6 +33,7 @@ Node* AVLTree::insertHelper(Node* root, string name, string ID) {
     // Base Case: creating leaf node in appropriate position
     if(root == nullptr) {
         cout << "successful" << endl;
+        nodeCount++;
         return new Node(name, ID);
     }
     // If current ID is already stored
@@ -45,12 +53,13 @@ Node* AVLTree::insertHelper(Node* root, string name, string ID) {
     // Calculating height of current node
     root->height = 1 + max(root->left ? root->left->height : 0, root->right ? root->right->height : 0);
     // Calculating balance factor of current node
-    root->balanceFactor = (root->left ? root->left->height+1 : 0) - (root->right ? root->right->height+1 : 0);
+    root->balanceFactor = (root->left ? root->left->height : 0) - (root->right ? root->right->height : 0);
 
     // Left Left Alignment
     if (root->balanceFactor == 2 && root->left->balanceFactor == 1) {
         // Adjusting the heights as they change from the rotation
         root->height -= 2;
+
         // Rotating
         Node* temp = root->left;
         root->left = root->left->right;
@@ -61,6 +70,7 @@ Node* AVLTree::insertHelper(Node* root, string name, string ID) {
     if (root->balanceFactor == -2 && root->right->balanceFactor == -1) {
         // Adjusting the heights as they change from the rotation
         root->height -= 2;
+
         // Rotating
         Node* temp = root->right;
         root->right = root->right->left;
@@ -69,37 +79,45 @@ Node* AVLTree::insertHelper(Node* root, string name, string ID) {
     }
     // Left Right Alignment
     if (root->balanceFactor == 2 && root->left->balanceFactor == -1) {
+
         // Adjusting the heights as they change from the rotation
         root->height -= 2;
         root->left->right->height++;
         root->left->height--;
+
         // 1st step of left-right rotation
+        Node* temp1 = root->left->right->left; // Bottom node's left
         root->left->right->left = root->left;
-        Node* temp = root->left->right;
-        root->left->right = nullptr;
-        root->left = temp;
+        Node* temp2 = root->left->right; // Bottom node
+        root->left->right = temp1;
+        root->left = temp2;
+
         // 2nd step of left-right rotation
-        temp = root->left;
+        temp1 = root->left; // Center node (future root)
         root->left = root->left->right;
-        temp->right = root;
-        root = temp;
+        temp1->right = root;
+        root = temp1;
     }
     // Right Left Alignment
     if (root->balanceFactor == -2 && root->right->balanceFactor == 1) {
+
         // Adjusting the heights as they change from the rotation
         root->height -= 2;
         root->right->left->height++;
         root->right->height--;
-        // 1st step of left-right rotation
+
+        // 1st step of right-left rotation
+        Node* temp1 = root->right->left->right; // Bottom node's right
         root->right->left->right = root->right;
-        Node* temp = root->right->left;
-        root->right->left = nullptr;
-        root->right = temp;
+        Node* temp2 = root->right->left; // Bottom node
+        root->right->left = temp1;
+        root->right = temp2;
+
         // 2nd step of right-left rotation
-        temp = root->right;
+        temp1 = root->right; // Center node (future root)
         root->right = root->right->left;
-        temp->left = root;
-        root = temp;
+        temp1->left = root;
+        root = temp1;
     }
 
     return root;
@@ -107,19 +125,87 @@ Node* AVLTree::insertHelper(Node* root, string name, string ID) {
 
 void AVLTree::insert(string name, string ID) {
     treeRoot = insertHelper(treeRoot, name, ID);
+
+    //printBTHeight(treeRoot);
 }
 
-// Need to store the parent node to add the subtree back to the tree after its root is deleted
-void AVLTree::removeHelper(Node* root, Node* parent, string ID) {
-    // Case 1: target node has left child
-
-    // Case 2: target node has right child
-
-    // Case 3: target node has both children
-
-    // Case 4: target node has no children
-
+Node* AVLTree::removeHelper(Node* root, string ID) {
+    if (root == nullptr) {
+        return root;
+    }
+    if (ID < root->ID) {
+        root->left = removeHelper(root->left, ID);
+    }
+    else if (ID > root->ID) {
+        root->right = removeHelper(root->right, ID);
+    }
+    // If the root is the deletion target
+    else {
+        // Case 1: target node has no children
+        if (!root->left && !root->right) {
+            if(treeRoot == root) {
+                treeRoot = nullptr;
+            }
+            delete root;
+            root = nullptr;
+            return nullptr;
+        }
+        // Case 2: target node has only left child
+        else if (root->left && !root->right) {
+            Node* temp = root->left;
+            // Special case: deleted node is the treeRoot
+            if(treeRoot == root) {
+                treeRoot = temp;
+            }
+            delete root;
+            root = nullptr;
+            return temp;
+        }
+        // Case 3: target node has only right child
+        else if (!root->left && root->right) {
+            Node* temp = root->right;
+            // Special case: deleted node is the treeRoot
+            if(treeRoot == root) {
+                treeRoot = temp;
+            }
+            delete root;
+            root = nullptr;
+            return temp;
+        }
+        // Case 4: target node has both children
+        else {
+            Node* successor = root->right;
+            while (successor->left) {
+                // When successor->left is the target successor, ensure moving the successor does
+                // not cause a cycle in the tree (this could break the code later)
+                if(!successor->left->left) {
+                    Node* temp = successor->left;
+                    successor->left = nullptr;
+                    successor = temp;
+                    break;
+                }
+                successor = successor->left;
+            }
+            // Preventing node pointing to itself
+            if(root->right == successor) {
+                successor->right = nullptr;
+            }
+            else {
+                successor->right = root->right;
+            }
+            successor->left = root->left;
+            // Special case: deleted node is the treeRoot
+            if(treeRoot == root) {
+                treeRoot = successor;
+            }
+            delete root;
+            root = nullptr;
+            return successor;
+        }
+    }
+    return root;
 }
+
 
 void AVLTree::remove(string ID) {
     // First verify correct input
@@ -129,36 +215,43 @@ void AVLTree::remove(string ID) {
         return;
     }
 
-    // Start search for removal with left subtree
-    if (treeRoot->left && ID < treeRoot->left->ID) {
-        removeHelper(treeRoot, treeRoot->left, ID);
+    // Special case: only 1 node in tree
+    if(nodeCount == 1 && treeRoot->ID == ID) {
+        delete treeRoot;
+        cout << "successful" << endl;
+        nodeCount--;
+        treeRoot = nullptr;
     }
-    else if (treeRoot->right && ID > treeRoot->right->ID) {
-        removeHelper(treeRoot, treeRoot->right, ID);
+    else if(!removeHelper(treeRoot, ID)) {
+        cout << "unsuccessful" << endl;
     }
+    else {
+        updateHeights(treeRoot); // Fix the heights O(n)
+        cout << "successful" << endl;
+        nodeCount--;
+    }
+    //printBTHeight(treeRoot);
 }
 
 // O(log(n))
-bool AVLTree::searchID(Node* root, string ID) {
-    bool IDFound = false;
+Node* AVLTree::searchID(Node* root, string ID) {
     if(root == nullptr) {
-        return false;
+        return nullptr;
     }
     // Base case: matching ID
     if(root->ID == ID) {
-        cout << root->name << endl;
-        IDFound = true;
+        return root;
     }
     // Search left subtree
     else if(ID < root->ID) {
-        IDFound = searchID(root->left, ID);
+        root = searchID(root->left, ID);
     }
     // Search right subtree
     else if(ID > root->ID) {
-        IDFound = searchID(root->right, ID);
+        root = searchID(root->right, ID);
     }
 
-    return IDFound;
+    return root;
 }
 
 // O(n)
@@ -192,7 +285,11 @@ void AVLTree::search(string input) {
 
     // If searching using ID as input
     if(regex_match(input,IDReg)) {
-        if(!searchID(treeRoot,input)) {
+        Node* match = searchID(treeRoot,input);
+        if (match) {
+            cout << match->name << endl;
+        }
+        else {
             cout << "unsuccessful" << endl;
         }
     }
@@ -209,6 +306,215 @@ void AVLTree::search(string input) {
         return;
     }
 }
+// Passing bool by reference so it updates the state when getting to the bottom of the call stack
+// O(n)
+void AVLTree::printInorderHelper(Node* root, bool& isFirst) {
+    // LNR traversal
+    if(root == nullptr) {
+        return;
+    }
+    // Left (L)
+    printInorderHelper(root->left, isFirst);
+
+    // Node (N)
+    if(isFirst) {
+        cout << root->name;
+        isFirst = false;
+    }
+    else {
+        cout << ", " << root->name;
+    }
+
+    // Right (R)
+    printInorderHelper(root->right, isFirst);
+}
+
+// O(n)
+void AVLTree::printInorder() {
+    if(treeRoot != nullptr) {
+        bool isFirst = true;
+        printInorderHelper(treeRoot, isFirst);
+        cout << endl;
+    }
+}
+
+// O(n)
+void AVLTree::printPreorderHelper(Node* root, bool& isFirst) {
+    if(root == nullptr) {
+        return;
+    }
+    // Node (N)
+    if(isFirst) {
+        cout << root->name;
+        isFirst = false;
+    }
+    else {
+        cout << ", " << root->name;
+    }
+
+    // Left (L)
+    printPreorderHelper(root->left, isFirst);
+
+    // Right (R)
+    printPreorderHelper(root->right, isFirst);
+}
+
+// O(n)
+void AVLTree::printPreorder() {
+    if(treeRoot != nullptr) {
+        bool isFirst = true;
+        printPreorderHelper(treeRoot, isFirst);
+        cout << endl;
+    }
+}
+
+// O(n)
+void AVLTree::printPostorderHelper(Node* root, bool& isFirst) {
+    if(root == nullptr) {
+        return;
+    }
+    // Left (L)
+    printPostorderHelper(root->left, isFirst);
+    // Right (R)
+    printPostorderHelper(root->right, isFirst);
+    // Node (N)
+    if(isFirst) {
+        cout << root->name;
+        isFirst = false;
+    }
+    else {
+        cout << ", " << root->name;
+    }
+}
+
+// O(n)
+void AVLTree::printPostorder() {
+    if(treeRoot != nullptr) {
+        bool isFirst = true;
+        printPostorderHelper(treeRoot, isFirst);
+        cout << endl;
+    }
+}
+
+void AVLTree::printLevelCount() {
+    if(treeRoot == nullptr) {
+        cout << "0" << endl;
+    }
+    else {
+        cout << treeRoot->height << endl;
+    }
+}
+
+
+Node *AVLTree::removeInorderHelper(Node* root, int& i, int n) {
+    if(root == nullptr) {
+        return root;
+    }
+    // Left (L)
+    root->left = removeInorderHelper(root->left, i, n);
+
+
+    // Node (N)
+    // Found target node to delete
+    if (i == n) {
+
+        nodeCount--;
+        i++;
+
+        // Case 1: target node has no children
+        if (!root->left && !root->right) {
+            // Special case: deleted node is the treeRoot
+            if(treeRoot == root) {
+                treeRoot = nullptr;
+            }
+            delete root;
+            root = nullptr;
+            return nullptr;
+        }
+        // Case 2: target node has only left child
+        else if (root->left && !root->right) {
+            Node* temp = root->left;
+            // Special case: deleted node is the treeRoot
+            if(treeRoot == root) {
+                treeRoot = temp;
+            }
+            delete root;
+            root = nullptr;
+            return temp;
+        }
+            // Case 3: target node has only right child
+        else if (!root->left && root->right) {
+            Node* temp = root->right;
+            // Special case: deleted node is the treeRoot
+            if(treeRoot == root) {
+                treeRoot = temp;
+            }
+            delete root;
+            root = nullptr;
+            return temp;
+        }
+            // Case 4: target node has both children
+        else {
+            Node* successor = root->right;
+            while (successor->left) {
+                // When successor->left is the target successor, ensure moving the successor does
+                // not cause a cycle in the tree (this could break the code later)
+                if(!successor->left->left) {
+                    Node* temp = successor->left;
+                    successor->left = nullptr;
+                    successor = temp;
+                    break;
+                }
+                successor = successor->left;
+            }
+            // Preventing node pointing to itself
+            if(root->right == successor) {
+                successor->right = nullptr;
+            }
+            else {
+                successor->right = root->right;
+            }
+            successor->left = root->left;
+            // Special case: deleted node is the treeRoot
+            if(treeRoot == root) {
+                treeRoot = successor;
+            }
+            delete root;
+            root = nullptr;
+            return successor;
+        }
+
+    }
+    i++;
+
+    // Right (R)
+    root->right = removeInorderHelper(root->right, i, n);
+
+    return root;
+}
+
+
+void AVLTree::removeInorder(string n) {
+    // Verifying correct input
+    regex numReg = regex("^[0-9]+$");
+    if(!regex_match(n,numReg)) {
+        cout << "unsuccessful" << endl;
+    }
+    // If correct input
+    else {
+        int numN = stoi(n);
+        // If N exceeds the number of nodes in the tree
+        if(numN > nodeCount) {
+            cout << "unsuccessful" << endl;
+            return;
+        }
+        int i = 0;
+        removeInorderHelper(treeRoot, i, numN);
+        cout << "successful" << endl;
+    }
+    //printBTHeight(treeRoot);
+}
+
 
 // With help from ChatGPT to visualize the tree to make troubleshooting much easier
 void AVLTree::printBTHeight(Node* rootV, int indent) {
@@ -229,4 +535,18 @@ void AVLTree::printBTHeight(Node* rootV, int indent) {
         printBTHeight(rootV->left, indent + 4);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -5,7 +5,7 @@ Node::Node(string name, string ID) {
     left = nullptr;
     right = nullptr;
     balanceFactor = 0;
-    height = 0;
+    height = 1;
 }
 
 Node::Node() {

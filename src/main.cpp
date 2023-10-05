@@ -12,16 +12,17 @@ int main() {
 
     string numCommands;
 
-    getline(cin,numCommands); // Number of commands
+    getline(cin, numCommands); // Number of commands
 
     regex IDReg = regex("^[0-9]{8,8}$"); // 8-digit number
     regex nameReg = regex("^\"[a-zA-Z\\s]+\"$"); // Text enclosed in quotation marks
+    regex numReg = regex("^[0-9]+$");
 
     string commandString;
 
 
     // Run the loop as many times as there are commands
-    for(int i = 0; i < stoi(numCommands); i++) {
+    for (int i = 0; i < stoi(numCommands); i++) {
         // Taking the command line and making it into isstream to get each word part from it
         getline(cin, commandString);
         istringstream commandStream(commandString);
@@ -29,7 +30,7 @@ int main() {
         string command; // Command
 
         commandStream >> command >> ws;
-        if(command == "insert") {
+        if (command == "insert") {
             // Declaring parameters
             string nameInput;
             string IDInput;
@@ -40,74 +41,37 @@ int main() {
             }
             commandStream >> IDInput;
 
-            tree.insert(nameInput,IDInput);
-        }
-        else if (command == "remove") {
+            tree.insert(nameInput, IDInput);
+        } else if (command == "remove") {
             string IDInput;
             commandStream >> IDInput;
             tree.remove(IDInput);
-        }
-        else if (command == "search") {
+        } else if (command == "search") {
             string input;
             // If input has quotes (expect spaces, so need quoted function)
             if (commandStream.peek() == '"') {
                 commandStream >> quoted(input);
-            }
-            else {
+            } else {
                 commandStream >> input;
             }
             tree.search(input);
+        } else if (command == "printInorder") {
+            tree.printInorder();
+        } else if (command == "printPreorder") {
+            tree.printPreorder();
+        } else if (command == "printPostorder") {
+            tree.printPostorder();
+        } else if (command == "printLevelCount") {
+            tree.printLevelCount();
+        } else if (command == "removeInorder") {
+            string input;
+            commandStream >> input;
+            tree.removeInorder(input);
         }
-        //vector<string> commandV;
-//        while(getline(commandStream,word, ' ')) {
-//            commandV.push_back(word);
-//        }
-//
-//
-//        // If the first word of the command is "insert"
-//        // insert NAME ID
-//        if (commandV.at(0) == "insert") {
-//            // If wrong format of command
-//            if(commandV.size() != 3) {
-//                cout << "unsuccessful" << endl;
-//            }
-//            // If invalid name format
-//            else if (!regex_match(commandV.at(1),nameReg)) {
-//                cout << "unsuccessful" << endl;
-//            }
-//            // If invalid ID format
-//            else if (!regex_match(commandV.at(2), IDReg)) {
-//                cout << "unsuccessful" << endl;
-//            }
-//            // If valid format
-//            else {
-//                tree.insert(commandV.at(1), commandV.at(2));
-//                //cout << "successful: " << commandV.at(1)<< endl;
-//            }
-//        }
-        // If no function was called
+            // If no existing function was called
         else {
             cout << "unsuccessful" << endl;
         }
 
     }
-
-
-
-
-    // remove ID
-
-    //search ID
-
-    //search NAME
-
-    //printInorder
-
-    //printPreorder
-
-    //printPostorder
-
-    //printLevelCount
-
-    //removeInorder N
 }
